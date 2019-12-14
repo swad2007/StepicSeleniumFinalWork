@@ -13,9 +13,9 @@ class ProductPage(BasePage):
 
     def check_message_for_correct_name(self):
         product_name = self.browser.find_element(*ProductPageLocators.PRODUCT_NAME).text
-        assert any([product_name in mess.text for mess in self.get_list_of_messages()]), "Not product name in messages"
+        assert any([product_name == mess.text for mess in self.get_list_of_messages()]), "Not product name in messages"
 
     def check_card_price_for_one_good(self):
         product_price = self.browser.find_element(*ProductPageLocators.PRODUCT_PRICE).text
-        assert any([product_price in mess.text for mess in self.get_list_of_messages()]), "Not product price in messages"
+        assert any([product_price == mess.text for mess in self.get_list_of_messages()]), "Not product price in messages"
 
