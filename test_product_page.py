@@ -3,10 +3,10 @@ import pytest, time
 
 
 # link = "http://selenium1py.pythonanywhere.com/ru/catalogue/the-shellcoders-handbook_209/?promo=newYear"
-# link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=newYear2019"
+link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=newYear2019"
 
 
-
+@pytest.mark.skip
 @pytest.mark.parametrize('link', ["http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer0",
                                   "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer1",
                                   "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer2",
@@ -24,3 +24,42 @@ def test_guest_can_add_product_to_basket(browser, link):
     page.solve_quiz_and_get_code()
     page.check_message_for_correct_name()
     page.check_card_price_for_one_good()
+
+@pytest.mark.skip
+def test_guest_cant_see_success_message_after_adding_product_to_basket(browser):
+    """
+    Открываем страницу товара
+    Добавляем товар в корзину
+    Проверяем, что нет сообщения об успехе с помощью is_not_element_present
+    """
+    page = ProductPage(browser, link)
+    page.browser.implicitly_wait(0)
+    page.open()
+    page.add_to_card()
+    page.solve_quiz_and_get_code()
+    page.should_not_be_success_message()
+
+def test_guest_cant_see_success_message(browser):
+    """
+    Открываем страницу товара
+    Проверяем, что нет сообщения об успехе с помощью is_not_element_present
+    """
+
+    page = ProductPage(browser, link)
+    page.browser.implicitly_wait(0)
+    page.open()
+    page.should_not_be_success_message()
+
+@pytest.mark.skip
+def test_message_disappeared_after_adding_product_to_basket(browser):
+    """
+    Открываем страницу товара
+    Добавляем товар в корзину
+    Проверяем, что нет сообщения об успехе с помощью is_disappeared
+    """
+    page = ProductPage(browser, link)
+    page.browser.implicitly_wait(0)
+    page.open()
+    page.add_to_card()
+    page.solve_quiz_and_get_code()
+    page.should_not_be_success_message_with_disappered()
