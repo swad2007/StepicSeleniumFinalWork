@@ -1,5 +1,7 @@
 from .pages.product_page import ProductPage
 from .pages.basket_page import BasketPage
+from .pages.main_page import MainPage
+from .pages.login_page import LoginPage
 import pytest, time
 
 
@@ -26,6 +28,8 @@ def test_guest_can_add_product_to_basket(browser, link):
     page.check_message_for_correct_name()
     page.check_card_price_for_one_good()
 
+
+
 @pytest.mark.skip
 def test_guest_cant_see_success_message_after_adding_product_to_basket(browser):
     """
@@ -34,7 +38,7 @@ def test_guest_cant_see_success_message_after_adding_product_to_basket(browser):
     Проверяем, что нет сообщения об успехе с помощью is_not_element_present
     """
     page = ProductPage(browser, link)
-    page.browser.implicitly_wait(0)
+    page.browser.implicitly_wait(1)
     page.open()
     page.add_to_card()
     page.solve_quiz_and_get_code()
@@ -92,4 +96,43 @@ def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
     basket_page.check_for_blank_basket()
     basket_page.check_text_for_blank_basket()
 
+@pytest.mark.login_guest
+class TestUserAddToBasketFromProductPage:
 
+    """
+    for testing print:
+
+    pytest -s --language=en -m "login_guest" test_product_page.py
+
+    """
+    link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207"
+
+
+    @pytest.fixture(scope="function", autouse=True)
+    def setup(self, browser):
+
+        link = "http://selenium1py.pythonanywhere.com"
+        page = MainPage(browser, link)
+        page.open()
+        page.go_to_login_page()
+        login_page = LoginPage(browser, browser.current_url)
+        login_page.register_new_user(str(time.time()) + "@fakemail.org", "QkwWqn!3E3")
+
+
+    def test_user_cant_see_success_message(self, browser):
+        """
+        Открываем страницу товара
+        Проверяем, что нет сообщения об успехе с помощью is_not_element_present
+        """
+
+        page = ProductPage(browser, TestUserAddToBasketFromProductPage.link)
+        page.browser.implicitly_wait(0)
+        page.open()
+        page.should_not_be_success_message()
+
+    def test_user_can_add_product_to_basket(self, browser):
+        page = ProductPage(browser, TestUserAddToBasketFromProductPage.link)
+        page.open()
+        page.add_to_card()
+        page.check_message_for_correct_name()
+        page.check_card_price_for_one_good()
